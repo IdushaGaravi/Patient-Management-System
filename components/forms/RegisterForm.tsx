@@ -230,7 +230,7 @@ const RegisterForm = ({ user}: { user: User }) => {
         </div>
 
         <div className="flex flex-col gap-6 xl:flex-row">
-             <CustomFormField 
+            <CustomFormField 
                 fieldType={FormFieldType.TEXTAREA}
                 control={form.control}
                 name="allergies"
