@@ -45,6 +45,8 @@ const PasskeyModal = () => {
 
   const validatePasskey = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
+    console.log("Entered passkey:", passkey);
+    console.log("Expected passkey:", process.env.NEXT_PUBLIC_ADMIN_PASSKEY);
 
     if(passkey === process.env.NEXT_PUBLIC_ADMIN_PASSKEY) {
       const encryptedKey = encryptKey(passkey);
@@ -52,6 +54,7 @@ const PasskeyModal = () => {
       localStorage.setItem("accessKey", encryptedKey);
 
       setOpen(false)
+      
     } else {
       setError("Invalid passkey. Please try again.")
     }

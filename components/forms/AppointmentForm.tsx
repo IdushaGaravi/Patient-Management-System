@@ -15,15 +15,18 @@ import { FormFieldType } from "./PatientForm";
 import { Doctors } from "@/constants";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
-import { createAppointment } from "@/lib/actions/appointment.actions";
+import { createAppointment, updateAppointment } from "@/lib/actions/appointment.actions";
 import { getAppointmentSchema } from "@/lib/validation";
+import { Appointment } from "@/types/appwrite.types";
 
 const AppointmentForm = ({
-  userId, patientId, type
+  userId, patientId, type, appointment, setOpen
 }: {
   userId: string;
   patientId: string;
   type: "create" | "cancel" | "schedule";
+  appointment?: Appointment;
+  setOpen: (open: boolean) => void;
 }) => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -33,15 +36,19 @@ const AppointmentForm = ({
   const form = useForm<z.infer<typeof AppointmentFormValidation>>({
     resolver: zodResolver(AppointmentFormValidation),
     defaultValues: {
-      primaryPhysician: "",
-      schedule: new Date(),
-      reason: "",
-      note: "",
-      cancellationReason: "",
+      primaryPhysician: appointment ? appointment.primaryPhysician : "",
+      schedule: appointment ? new Date(appointment.schedule) : new Date(),
+      reason: appointment ? appointment.reason : "",
+      note: appointment ? appointment.note : "",
+      cancellationReason: appointment ? appointment.cancellationReason : "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
+  async function onSubmit(values: z.infer<typeof AppointmentFormValidation>, e?: React.FormEvent) {
+    console.log("✅ onSubmit called with values:", values);
+    if (e) {
+      e.preventDefault();
+    }
     setIsLoading(true);
 
     let status;
@@ -57,8 +64,11 @@ const AppointmentForm = ({
         break;
     }
 
+    console.log("📝 Status set to:", status);
+
     try {
         if (type === "create" && patientId) {
+            console.log("📌 Creating new appointment");
             const appointmentData = {
             userId,
             patient: patientId,
@@ -70,16 +80,40 @@ const AppointmentForm = ({
           };
           
           const appointment = await createAppointment(appointmentData);
+          console.log("✅ Appointment created:", appointment);
 
           if(appointment) {
             form.reset();
             router.push(`/patients/${userId}/new-appointment/success?appointmentId=${appointment.$id}`)
           }
+        }else {
+          console.log("📌 Updating existing appointment");
+          const appointmentToUpdate = {
+            userId,
+            appointmentId: appointment?.$id!,
+            appointment: {
+              primaryPhysician: values?.primaryPhysician,
+              schedule: new Date(values?.schedule),
+              status: status as Status,
+              cancellationReason: values?.cancellationReason,
+            },
+            type
+          }
+
+          console.log("📝 Update payload:", appointmentToUpdate);
+          const updatedAppointment = await updateAppointment(appointmentToUpdate);
+          console.log("✅ Appointment updated:", updatedAppointment);
+
+          if(updatedAppointment) {
+            console.log("🔄 Closing modal and resetting form");
+            setOpen && setOpen(false);
+            form.reset();
+          }
         }
 
         
     } catch (error) {
-        console.error(error);
+        console.error("❌ Error in onSubmit:", error);
     }
 
     setIsLoading(false);
@@ -104,11 +138,19 @@ const AppointmentForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
-        <section className="mb-12 space-y-4">
+      <form
+        onSubmit={(e) => {
+          console.log("🖱️ Form submit event triggered");
+          console.log("📋 Form errors:", form.formState.errors);
+          console.log("📋 Form values:", form.getValues());
+          form.handleSubmit((values) => onSubmit(values, e))();
+        }}
+        className="space-y-6 flex-1"
+      >
+        {type === "create" && <section className="mb-12 space-y-4">
             <h1 className="header">New Appointment</h1>
             <p className="text-dark-700">Request a new appointment in 10 seconds</p>
-        </section>
+        </section>}
 
         {type !== "cancel" && (
           <>
