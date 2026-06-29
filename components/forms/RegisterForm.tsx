@@ -113,7 +113,7 @@ const RegisterForm = ({ user}: { user: User }) => {
         <div className="flex flex-col gap-6 xl:flex-row">
             <CustomFormField 
                 fieldType={FormFieldType.DATE_PICKER}
-                control={form.control}
+                control={form.control as any}
                 name="birthDate"
                 label="Date of Birth"
             />
