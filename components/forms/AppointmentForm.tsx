@@ -156,7 +156,7 @@ const AppointmentForm = ({
           <>
             <CustomFormField 
               fieldType={FormFieldType.SELECT}
-              control={form.control}
+              control={form.control as any}
               name="primaryPhysician"
               label="Doctor"
               placeholder="Select a doctor"
@@ -181,7 +181,7 @@ const AppointmentForm = ({
 
             <CustomFormField
                 fieldType={FormFieldType.DATE_PICKER}
-                control={form.control}
+                control={form.control as any}
                 name="schedule"
                 label="Expected appointment date"
                 showTimeSelect
@@ -191,7 +191,7 @@ const AppointmentForm = ({
             <div className="flex flex-col gap-6 xl:flex-row">
               <CustomFormField 
                 fieldType={FormFieldType.TEXTAREA}
-                control={form.control}
+                control={form.control as any}
                 name="reason"
                 label="Reason for appointment"
                 placeholder="Enter reason for appointment"
@@ -199,7 +199,7 @@ const AppointmentForm = ({
 
               <CustomFormField 
                 fieldType={FormFieldType.TEXTAREA}
-                control={form.control}
+                control={form.control as any}
                 name="note"
                 label="Notes"
                 placeholder="Enter notes"
@@ -211,7 +211,7 @@ const AppointmentForm = ({
         {type === "cancel" && (
           <CustomFormField 
               fieldType={FormFieldType.TEXTAREA}
-              control={form.control}
+              control={form.control as any}
               name="cancellationReason"
               label="Reason for cancellation"
               placeholder="Enter reason for cancellation"
