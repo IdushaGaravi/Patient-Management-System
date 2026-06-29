@@ -44,7 +44,7 @@ export const columns: ColumnDef<Appointment>[] = [
         accessorKey: "primaryPhysician",
         header: () => "Doctor",
         cell: ({ row }) => {
-            const doctor = Doctors.find((doc) => doc.name === row.original.primaryPhysician)
+            const doctor = Doctors.find((doc) => doc.name === row.original.primaryPhysician) ?? Doctors[0]
             
             return (
                 <div className="flex items-center gap-3">
