@@ -71,7 +71,7 @@ const PatientForm = () => {
         
         <CustomFormField 
             fieldType={FormFieldType.INPUT}
-            control={form.control}
+            control={form.control as any} 
             name="name"
             label="Full Name"
             placeholder="John Doe"
@@ -81,7 +81,7 @@ const PatientForm = () => {
 
         <CustomFormField 
             fieldType={FormFieldType.INPUT}
-            control={form.control}
+            control={form.control as any}
             name="email"
             label="Email"
             placeholder="johndoe@example.com"
@@ -91,7 +91,7 @@ const PatientForm = () => {
 
         <CustomFormField 
             fieldType={FormFieldType.PHONE_INPUT}
-            control={form.control}
+            control={form.control as any}
             name="phone"
             label="Phone Number"
             placeholder="(123) 456-7890"
